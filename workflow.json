@@ -1,0 +1,966 @@
+{
+  "name": "ElevenLabs AI Sales Bot - Lithuanian Outbound Calls",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "bc771b56-d97a-4179-82c7-1d7bf46ff3ce",
+      "name": "Telegram Lead Intake",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        336
+      ],
+      "webhookId": "fb82a2ef-cc1b-4755-b214-8c5c65f1b252",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "businessName",
+              "value": "={{ $json.message.text.match(/Business Name:\\s*(.+)/)?.[1] || \"Unknown\" }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "contactName",
+              "value": "={{ $json.message.text.match(/Contact:\\s*(.+)/)?.[1] || \"Unknown\" }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "phone",
+              "value": "={{ $json.message.text.match(/Phone:\\s*(.+)/)?.[1] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "city",
+              "value": "={{ $json.message.text.match(/City:\\s*(.+)/)?.[1] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "businessType",
+              "value": "={{ $json.message.text.match(/Business Type:\\s*(.+)/)?.[1] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "telegramUserId",
+              "value": "={{ $json.message.from.id }}",
+              "type": "number"
+            },
+            {
+              "id": "7",
+              "name": "telegramChatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "8",
+              "name": "leadDate",
+              "value": "={{ $now.toFormat(\"yyyy-MM-dd\") }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "leadTime",
+              "value": "={{ $now.toFormat(\"HH:mm:ss\") }}",
+              "type": "string"
+            },
+            {
+              "id": "10",
+              "name": "callStatus",
+              "value": "New Lead",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "016d5ec9-ff8d-4547-83c8-3f7bb28f1893",
+      "name": "Parse Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Your Sheet Name",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 350872394,
+          "mode": "list",
+          "cachedResultName": "Sales Bot Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=350872394"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{$now.toFormat('yyyy-MM-dd')}}",
+            "Time": "={{$now.toFormat('HH:mm')}}",
+            "Business Name": "={{$json.business_name}}",
+            "Contact Name": "={{$json.contact_name}}",
+            "Phone": "={{$json.phone}}",
+            "City": "={{$json.city}}",
+            "Business Type": "={{$json.business_type}}",
+            "Call Status": "New Lead"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Business Name",
+              "displayName": "Business Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Contact Name",
+              "displayName": "Contact Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Business Type",
+              "displayName": "Business Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Call Status",
+              "displayName": "Call Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Interest Level ",
+              "displayName": "Interest Level ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Decision Maker",
+              "displayName": "Decision Maker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred Language",
+              "displayName": "Preferred Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Business Need",
+              "displayName": "Business Need",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pain Point",
+              "displayName": "Pain Point",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Recommended Service",
+              "displayName": "Recommended Service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Objections",
+              "displayName": "Objections",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Action",
+              "displayName": "Next Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Follow-Up Required",
+              "displayName": "Follow-Up Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Callback Time",
+              "displayName": "Callback Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Meeting Booked",
+              "displayName": "Meeting Booked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Meeting Date",
+              "displayName": "Meeting Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Meeting Time",
+              "displayName": "Meeting Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "29ca13ff-38e1-4a4c-8e5b-bb5d04fca296",
+      "name": "Store Lead in Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        336
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83c\udd95 *New Lead Received*\n\n*Business:* {{ $(\"Parse Lead Data\").item.json.businessName }}\n*Contact:* {{ $(\"Parse Lead Data\").item.json.contactName }}\n*Phone:* {{ $(\"Parse Lead Data\").item.json.phone }}\n*City:* {{ $(\"Parse Lead Data\").item.json.city }}\n*Type:* {{ $(\"Parse Lead Data\").item.json.businessType }}\n\n\u2705 Lead stored in Google Sheets",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "427a9d73-7083-4699-b542-401ddb842458",
+      "name": "Alert: New Lead",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        336
+      ],
+      "webhookId": "39438c1f-52d0-4941-8ce6-f8674fd3583e",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "elevenlabs-call-result",
+        "options": {
+          "noResponseBody": false,
+          "responseData": "={{ { \"status\": \"received\" } }}"
+        }
+      },
+      "id": "d6bb6f63-2a65-462d-86d3-aff3a3ffe1c5",
+      "name": "ElevenLabs Call Result Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        656
+      ],
+      "webhookId": "e99586ce-5921-4331-93ba-81bc875d94a8"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract call data\nconst callData = $input.item.json.body;\nconst analysis = callData.analysis || {};\nconst metadata = callData.metadata || {};\n\n// Generate English summary\nconst summary = `Call completed with ${metadata.contactName} from ${metadata.businessName} in ${metadata.city}.\n\nInterest Level: ${analysis.interest_level || 'unknown'}\nDecision Maker: ${analysis.decision_maker || 'unknown'}\nLanguage: ${analysis.preferred_language || 'Lithuanian'}\n\nPain Points: ${analysis.pain_points || 'Not identified'}\nRecommended Service: ${analysis.recommended_service || 'To be determined'}\nObjections: ${analysis.objections || 'None'}\n\nMeeting Booked: ${analysis.meeting_booked ? 'Yes' : 'No'}\n${analysis.meeting_booked ? 'Meeting Date: ' + analysis.meeting_date + ' at ' + analysis.meeting_time : ''}\n\nCall Duration: ${callData.duration || 0} seconds\nStatus: ${callData.status}`;\n\n// Determine next action\nlet nextAction = 'Follow-up call';\nif (analysis.meeting_booked) {\n  nextAction = 'Meeting scheduled';\n} else if (analysis.interest_level === 'high') {\n  nextAction = 'Send proposal';\n} else if (analysis.interest_level === 'low') {\n  nextAction = 'Archive';\n}\n\nreturn {\n  json: {\n    ...callData,\n    summary: summary,\n    nextAction: nextAction,\n    callStatus: analysis.meeting_booked ? 'Meeting Booked' : (analysis.interest_level === 'high' ? 'Interested' : 'Follow-up Needed')\n  }\n};"
+      },
+      "id": "e4981c1e-205a-4390-8832-b05b9f4ab3fe",
+      "name": "Generate English Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        656
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Your Sheet Name",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 350872394,
+          "mode": "list",
+          "cachedResultName": "Sales Bot Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=350872394"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Call Status": "={{$json.data.status}}",
+            "Interest Level ": "={{$json.data.analysis.interest_level}}",
+            "Decision Maker": "={{$json.data.analysis.decision_maker}}",
+            "Preferred Language": "={{$json.data.analysis.preferred_language}}",
+            "Business Need": "={{$json.data.analysis.business_need}}",
+            "Pain Point": "={{$json.data.analysis.business_pain_point}}",
+            "Recommended Service": "={{$json.data.analysis.recommended_service}}",
+            "Objections": "={{$json.data.analysis.objections}}",
+            "Summary": "={{$json.data.analysis.summary}}",
+            "Next Action": "={{$json.data.analysis.next_action}}",
+            "Follow-Up Required": "={{$json.data.analysis.follow_up_required}}",
+            "Callback Time": "={{$json.data.analysis.callback_time}}",
+            "Meeting Booked": "={{$json.data.analysis.meeting_booked}}",
+            "Meeting Date": "={{$json.data.analysis.meeting_date}}",
+            "Meeting Time": "={{$json.data.analysis.meeting_time}}",
+            "Notes": "={{$json.data.analysis.notes}}",
+            "Phone": "={{$json.data.metadata.phone}}"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Business Name",
+              "displayName": "Business Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact Name",
+              "displayName": "Contact Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Business Type",
+              "displayName": "Business Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Call Status",
+              "displayName": "Call Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interest Level ",
+              "displayName": "Interest Level ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker",
+              "displayName": "Decision Maker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Preferred Language",
+              "displayName": "Preferred Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Business Need",
+              "displayName": "Business Need",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pain Point",
+              "displayName": "Pain Point",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recommended Service",
+              "displayName": "Recommended Service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Objections",
+              "displayName": "Objections",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next Action",
+              "displayName": "Next Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow-Up Required",
+              "displayName": "Follow-Up Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Callback Time",
+              "displayName": "Callback Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Meeting Booked",
+              "displayName": "Meeting Booked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Meeting Date",
+              "displayName": "Meeting Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Meeting Time",
+              "displayName": "Meeting Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "753a4a1c-ee0f-458c-a8ac-d58c8183a1e3",
+      "name": "Update Call Results in Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        656
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $(\"Generate English Summary\").item.json.analysis.meeting_booked }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              },
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "34070b78-feec-432c-90a8-682e6135eaf3",
+      "name": "Meeting Booked?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        912,
+        656
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "YOUR_GMAIL",
+          "mode": "list",
+          "cachedResultName": "YOUR_GMAIL"
+        },
+        "start": "={{ $json.analysis.meeting_date + \"T\" + $json.analysis.meeting_time + \":00\" }}",
+        "end": "={{ DateTime.fromISO($json.analysis.meeting_date + \"T\" + $json.analysis.meeting_time + \":00\").plus({ hours: 1 }).toISO() }}",
+        "additionalFields": {
+          "description": "=Sales meeting with {{ $json.metadata.contactName }} from {{ $json.metadata.businessName }}.\n\nBusiness Type: {{ $json.metadata.businessType }}\nCity: {{ $json.metadata.city }}\n\nPain Points: {{ $json.analysis.pain_points }}\nRecommended Service: {{ $json.analysis.recommended_service }}\n\nPhone: Contact via Telegram chat {{ $json.metadata.telegramChatId }}",
+          "location": "={{ $json.metadata.city }}, Lithuania",
+          "summary": "=Sales Meeting - {{ $json.metadata.businessName }}"
+        }
+      },
+      "id": "f6a30c0d-7b29-45b5-b5dd-fbd43d9c143d",
+      "name": "Create Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        560
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\udcc5 *Meeting Booked!*\n\n*Business:* {{ $(\"Generate English Summary\").item.json.metadata.businessName }}\n*Contact:* {{ $(\"Generate English Summary\").item.json.metadata.contactName }}\n*Date:* {{ $(\"Generate English Summary\").item.json.analysis.meeting_date }}\n*Time:* {{ $(\"Generate English Summary\").item.json.analysis.meeting_time }}\n\n*Interest:* {{ $(\"Generate English Summary\").item.json.analysis.interest_level }}\n*Pain Points:* {{ $(\"Generate English Summary\").item.json.analysis.pain_points }}\n\n\u2705 Calendar event created",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "ac9db36e-6e7f-4b9e-8026-e97840fc48be",
+      "name": "Alert: Meeting Booked",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        560
+      ],
+      "webhookId": "b2c60bc0-9efe-4438-b143-515b6e8e9979",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\udcde *Call Completed*\n\n*Business:* {{ $(\"Generate English Summary\").item.json.metadata.businessName }}\n*Contact:* {{ $(\"Generate English Summary\").item.json.metadata.contactName }}\n*Status:* {{ $(\"Generate English Summary\").item.json.callStatus }}\n*Interest:* {{ $(\"Generate English Summary\").item.json.analysis.interest_level }}\n\n*Summary:*\n{{ $(\"Generate English Summary\").item.json.summary }}\n\n*Next Action:* {{ $(\"Generate English Summary\").item.json.nextAction }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "fa51363c-ddf0-4add-944c-da8a51198f3e",
+      "name": "Alert: Call Completed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        752
+      ],
+      "webhookId": "f837563d-dd64-4919-a519-dfc9ef9a088f",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce5 Lead Intake Flow\n\n1. Receive lead from Telegram\n2. Parse lead data\n3. Store in Google Sheets\n4. Send alert\n5. Trigger ElevenLabs call",
+        "height": 120,
+        "width": 1300,
+        "color": 2
+      },
+      "id": "377923e8-d41f-4916-9947-6f38efa43587",
+      "name": "Sticky Note 790ae049",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        208,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcde Call Results Processing\n\n1. Receive webhook from ElevenLabs\n2. Generate English summary\n3. Update Google Sheets\n4. Check if meeting booked\n5. Create calendar event (if meeting)\n6. Send Telegram alerts",
+        "height": 120,
+        "width": 1600,
+        "color": 3
+      },
+      "id": "498ba77a-e581-4f2e-807d-719e5564c55f",
+      "name": "Sticky Note 06774da6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        112,
+        528
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Lead Intake": {
+      "main": [
+        [
+          {
+            "node": "Parse Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Store Lead in Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Lead in Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Alert: New Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert: New Lead": {
+      "main": [
+        []
+      ]
+    },
+    "ElevenLabs Call Result Webhook": {
+      "main": [
+        [
+          {
+            "node": "Generate English Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate English Summary": {
+      "main": [
+        [
+          {
+            "node": "Update Call Results in Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Call Results in Sheets": {
+      "main": [
+        [
+          {
+            "node": "Meeting Booked?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting Booked?": {
+      "main": [
+        [
+          {
+            "node": "Create Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert: Call Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Alert: Meeting Booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ad974fb0-ec3c-47e4-9971-d71b3ac78c0b",
+  "meta": {
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "id": "W23L6ZYXnLnBZQdM",
+  "tags": []
+}
